@@ -1,0 +1,160 @@
+*{
+      margin: 0;
+      transition: all .5s cubic-bezier(0.075, 0.82, 1, 1);
+}
+:root{
+      --color1: rgb(5, 32, 21);
+      --color2: rgb(252, 255, 240);
+
+      --fontFamily1: "Roboto", sans-serif;
+}
+body{
+      font-family: var(--fontFamily1);
+      background-color: var(--color2);
+      background-size: 10%;
+}
+nav{
+      background-color: var(--color1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: space-evenly;
+      border-radius:0 2rem 2rem 0;
+}
+a{   
+      font-size: 8vw;
+      font-weight: 600;
+      color: var(--color2);
+      text-decoration: none;
+}
+.logo{
+      width: 40vw;
+}
+.movies{
+      display: flex;
+}
+.filmes{
+      font-size: 1vw;
+      display: flex;
+      border-radius: 1rem;
+      align-items: center;
+      flex-direction: column;
+      background-color: var(--color1);
+      width: 20vw;
+      margin: 2vw;
+      height: 70vh;
+      color:var(--color2);
+}
+.filmes img{
+      width: 100%;
+      border-radius: 1rem;
+}
+.filmes:hover{
+      cursor: pointer;
+      transform: scale(1.02);
+}
+.textFilmes{
+      width: 90%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-direction: column;
+      height: 30%;
+}
+.textFilmes p{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 30%;
+}
+.textFilmes img{
+      width: 2vw;
+}
+
+i{
+      color: var(--color2);
+      font-size: 15vw;
+}
+.mandalorian{
+      border-radius: 2vw;
+}
+.topo{
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+}
+h1{
+      font-family: "Balsamiq Sans", sans-serif;
+      font-size: 7vw;
+}
+
+.about{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+}
+
+.init{
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      width: 100vw;
+}
+.text{
+      width: 50vw;
+      text-align: justify;
+
+}
+
+.text p{
+      font-size: 1.8vw;
+}
+.container h1{
+      text-align: center;
+}
+
+.solo{
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      font-size: 2vw;
+}
+
+.left a img{
+      width: 5vw;
+      position: absolute;
+      top: 3.5vw;
+      color: var(--color1);
+      background-color: var(--color2);
+      border-radius: 0 0 50% 0;
+}
+span{
+      margin-left: 30%;
+}
+.left .poster{
+      height: 80vh;
+}
+.left p{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+}
+.left p img{
+      width: 3vw;
+      margin-right: 2vw;
+}
+.right{
+      width: 50%;
+      text-align: justify;
+}
+.right h1{
+      text-align: start;
+}
