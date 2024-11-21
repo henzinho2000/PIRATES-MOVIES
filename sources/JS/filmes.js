@@ -1,5 +1,5 @@
-const url =
-	"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-br&page=1&sort_by=popularity.desc";
+const urlBase =
+"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-br&sort_by=popularity.desc";
 const urlImage = "https://image.tmdb.org/t/p/w500";
 const options = {
 	method: "GET",
@@ -10,57 +10,58 @@ const options = {
 	},
 };
 const body = document.querySelector("body");
+let currentPage = 1; // Página atual da API
+let loading = false; // Evita chamadas duplicadas
+let currentRow = null; // Linha atual de filmes
+const movies = [];
 
-async function takeTheInformationOfAPI() {
+async function fetchMovies(page = 1) {
+	const url = `${urlBase}&page=${page}`;
 	try {
 		const response = await fetch(url, options);
 		if (response.ok) {
-			const responseJson = await response.json();
-			return responseJson;
+			const data = await response.json();
+			return data.results;
 		} else {
 			throw new Error("Request Failed");
 		}
 	} catch (e) {
-		console.log("Network: ", e);
+		console.error("Erro ao buscar filmes:", e);
 	}
 }
-
-const movies = [];
-function convertString(string){
-	let strings = "";
-	for(let i in string){
+function setString(string){
+	let newString = "";
+	for (let i in string){
 		if(string[i] == "-"){
-			strings += "/"
+			newString += "/";
 		}else{
-			strings += string[i];
+			newString += string[i];
 		}
 	}
-	return strings;
+	return newString;
 }
-async function filterTheInformation() {
-	const response = await takeTheInformationOfAPI();
-	const results = response.results;
-	const maxResults = Math.min(results.length, 90);
 
-	for (let i = 0; i < maxResults; i++) {
-		const title = results[i].title;
-		const overview = results[i].overview;
-		const avarege = results[i].vote_average;
-		const image = results[i].poster_path;
-		const popularity = results[i].popularity;
-		const date = results[i].release_date;
-
-		const newObject = {
-			title: title,
-			image: image,
-			avarege: avarege.toFixed(2),
-			overview: overview,
-			popularity: popularity,
-			date: date
-		};
-		movies.push(newObject);
+async function loadMovies() {
+	if (loading) return;
+	loading = true; // Impede múltiplas chamadas simultâneas
+	const results = await fetchMovies(currentPage);
+	console.log(results[0])
+	if (results) {
+		results.forEach((movie, index) => {
+			const newObject = {
+				title: movie.title,
+				image: movie.poster_path,
+				avarege: movie.vote_average.toFixed(2),
+				overview: movie.overview,
+				popularity: movie.popularity,
+				date: setString(movie.release_date),
+			};
+			movies.push(newObject);
+			drawMovie(newObject, index);
+		});
+		currentPage++; // Avança para a próxima página
 	}
-	return movies;
+	loading = false; // Permite novas chamadas
 }
 
 function deleteAll(title, image, avarege, overview,date) {
@@ -81,45 +82,43 @@ function deleteAll(title, image, avarege, overview,date) {
 	`;
 }
 
-async function drawMovies() {
-	const moviesData = await filterTheInformation();
-	let contador = 0;
-	const cols	= Math.floor(moviesData.length / 4);
-	
-	for (let j = 0; j < cols; j++) {
-		const divMovies = document.createElement("div");
-		divMovies.className = "movies";
-		let i = 0;
-		while (i < 4 && contador < moviesData.length) {
-			const divFilmes = document.createElement("div");
-			const movie = moviesData[contador];
-
-			divFilmes.innerHTML = `
-            	<div class="filmes">
-                  <img src="${urlImage}${movie.image}" alt="">
-                  <div class="textFilmes">
-                        <h2>${movie.title}</h2>
-                        <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${movie.avarege}</p>
-                  </div>
-            	</div>
-			`;
-
-			divFilmes.addEventListener("click", () => {
-				deleteAll(
-					movie.title,
-					movie.image,
-					movie.avarege,
-					movie.overview,
-					convertString(movie.date)
-				);
-			});
-
-			divMovies.appendChild(divFilmes);
-			i++;
-			contador++;
-		}
-		body.appendChild(divMovies);
+function drawMovie(movie, index) {
+	// Cria uma nova linha de filmes se necessário
+	if (!currentRow || currentRow.childElementCount >= 4) {
+		currentRow = document.createElement("div");
+		currentRow.className = "movies";
+		body.appendChild(currentRow);
 	}
+
+	const divFilmes = document.createElement("div");
+	divFilmes.className = "filmes";
+	divFilmes.innerHTML = `
+        <img src="${urlImage}${movie.image}" alt="">
+        <div class="textFilmes">
+            <h2>${movie.title}</h2>
+            <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${movie.avarege}</p>
+        </div>
+    `;
+
+	divFilmes.addEventListener("click", () => {
+		deleteAll(
+			movie.title,
+			movie.image,
+			movie.avarege,
+			movie.overview,
+			movie.date
+		);
+	});
+
+	currentRow.appendChild(divFilmes);
 }
 
-drawMovies();
+// Detecta fim da página e carrega mais filmes
+window.addEventListener("scroll", () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
+		loadMovies();
+	}
+});
+
+// Inicializa com a primeira página de filmes
+loadMovies();

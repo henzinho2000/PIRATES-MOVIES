@@ -1,5 +1,5 @@
-const url =
-	"https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=pt-br&page=1&sort_by=popularity.desc";
+const urlBase =
+	"https://api.themoviedb.org/3/discover/tv?include_adult=false&include_null_first_air_dates=false&language=pt-br&sort_by=popularity.desc";
 const urlImage = "https://image.tmdb.org/t/p/w500";
 const options = {
 	method: "GET",
@@ -10,59 +10,46 @@ const options = {
 	},
 };
 const body = document.querySelector("body");
+let currentPage = 1; // Página atual da API
+let loading = false; // Evita chamadas duplicadas
+let currentRow = null; // Linha atual de filmes
+const movies = [];
 
-async function takeTheInformationOfAPI() {
+async function fetchMovies(page = 1) {
+	const url = `${urlBase}&page=${page}`;
 	try {
 		const response = await fetch(url, options);
 		if (response.ok) {
-			const responseJson = await response.json();
-			return responseJson;
+			const data = await response.json();
+			return data.results;
 		} else {
 			throw new Error("Request Failed");
 		}
 	} catch (e) {
-		console.log("Network: ", e);
+		console.error("Erro ao buscar filmes:", e);
 	}
 }
 
-const movies = [];
-
-function convertString(string){
-	let strings = "";
-	for(let i in string){
-		if(string[i] == "-"){
-			strings += "/"
-		}else{
-			strings += string[i];
-		}
+async function loadMovies() {
+	if (loading) return;
+	loading = true; // Impede múltiplas chamadas simultâneas
+	const results = await fetchMovies(currentPage);
+	if (results) {
+		results.forEach((movie, index) => {
+			const newObject = {
+				title: movie.name,
+				image: movie.poster_path,
+				avarege: movie.vote_average.toFixed(2),
+				overview: movie.overview,
+				popularity: movie.popularity,
+				date: movie.first_air_date,
+			};
+			movies.push(newObject);
+			drawMovie(newObject, index);
+		});
+		currentPage++; // Avança para a próxima página
 	}
-	return strings;
-}
-
-async function filterTheInformation() {
-	const response = await takeTheInformationOfAPI();
-	const results = response.results;
-	console.log(results[0])
-	const maxResults = Math.min(results.length, 20);
-	for (let i = 0; i < maxResults; i++) {
-		const title = results[i].name;
-		const overview = results[i].overview;
-		const avarege = results[i].vote_average;
-		const image = results[i].poster_path;
-		const popularity = results[i].popularity;
-		const date = results[i].first_air_date;
-
-		const newObject = {
-			title: title,
-			image: image,
-			avarege: avarege.toFixed(2),
-			overview: overview,
-			popularity: popularity,
-			date: date
-		};
-		movies.push(newObject);
-	}
-	return movies;
+	loading = false; // Permite novas chamadas
 }
 
 function deleteAll(title, image, avarege, overview,date) {
@@ -71,7 +58,7 @@ function deleteAll(title, image, avarege, overview,date) {
 			<div class="left">
 				<a href="./series.html" about="minecraft"><img src="./sources/styles/seta.svg"></a>
 				<img class="poster" src="${urlImage}${image}" alt="" />
-				<p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${avarege} <span>${date}</span></p>
+				<p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${avarege}    <span>${date}</span></p>
 			</div>
 			<div class="right">
 				<h1>${title}</h1>
@@ -83,45 +70,43 @@ function deleteAll(title, image, avarege, overview,date) {
 	`;
 }
 
-async function drawMovies() {
-	const moviesData = await filterTheInformation();
-	let contador = 0;
-	const cols	= Math.floor(moviesData.length / 4);
-	
-	for (let j = 0; j < cols; j++) {
-		const divMovies = document.createElement("div");
-		divMovies.className = "movies";
-		let i = 0;
-		while (i < 4 && contador < moviesData.length) {
-			const divFilmes = document.createElement("div");
-			const movie = moviesData[contador];
-
-			divFilmes.innerHTML = `
-            	<div class="filmes">
-                  <img src="${urlImage}${movie.image}" alt="">
-                  <div class="textFilmes">
-                        <h2>${movie.title}</h2>
-                        <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${movie.avarege}</p>
-                  </div>
-            	</div>
-			`;
-
-			divFilmes.addEventListener("click", () => {
-				deleteAll(
-					movie.title,
-					movie.image,
-					movie.avarege,
-					movie.overview,
-					convertString(movie.date)
-				);
-			});
-
-			divMovies.appendChild(divFilmes);
-			i++;
-			contador++;
-		}
-		body.appendChild(divMovies);
+function drawMovie(movie, index) {
+	// Cria uma nova linha de filmes se necessário
+	if (!currentRow || currentRow.childElementCount >= 4) {
+		currentRow = document.createElement("div");
+		currentRow.className = "movies";
+		body.appendChild(currentRow);
 	}
+
+	const divFilmes = document.createElement("div");
+	divFilmes.className = "filmes";
+	divFilmes.innerHTML = `
+        <img src="${urlImage}${movie.image}" alt="">
+        <div class="textFilmes">
+            <h2>${movie.title}</h2>
+            <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg" alt="">${movie.avarege}</p>
+        </div>
+    `;
+
+	divFilmes.addEventListener("click", () => {
+		deleteAll(
+			movie.title,
+			movie.image,
+			movie.avarege,
+			movie.overview,
+			movie.date
+		);
+	});
+
+	currentRow.appendChild(divFilmes);
 }
 
-drawMovies();
+// Detecta fim da página e carrega mais filmes
+window.addEventListener("scroll", () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
+		loadMovies();
+	}
+});
+
+// Inicializa com a primeira página de filmes
+loadMovies();

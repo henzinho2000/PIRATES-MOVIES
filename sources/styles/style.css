@@ -8,6 +8,15 @@
 
       --fontFamily1: "Roboto", sans-serif;
 }
+::-webkit-scrollbar{
+      background-color: var(--color2);
+      width: 10px;
+}
+::-webkit-scrollbar-thumb{
+      background-color: var(--color1);
+      border-radius: 20px;
+}
+
 body{
       font-family: var(--fontFamily1);
       background-color: var(--color2);
@@ -139,6 +148,7 @@ span{
 }
 .left .poster{
       height: 80vh;
+      border-radius: 2vw;
 }
 .left p{
       display: flex;
