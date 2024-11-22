@@ -65,6 +65,7 @@ async function loadMovies() {
 }
 
 function deleteAll(title, image, avarege, overview,date) {
+	body.innerHTML = false;
 	body.innerHTML = `
 		<div class="solo">
 			<div class="left">

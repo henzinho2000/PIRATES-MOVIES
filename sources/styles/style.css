@@ -16,7 +16,9 @@
       background-color: var(--color1);
       border-radius: 20px;
 }
-
+iframe{
+      width: 90vw;
+}
 body{
       font-family: var(--fontFamily1);
       background-color: var(--color2);
@@ -52,7 +54,7 @@ a{
       background-color: var(--color1);
       width: 20vw;
       margin: 2vw;
-      height: 70vh;
+      height: 50vw;
       color:var(--color2);
 }
 .filmes img{
@@ -167,4 +169,9 @@ span{
 }
 .right h1{
       text-align: start;
+}
+
+.abut{
+      width: 45%;
+      height: auto;
 }
