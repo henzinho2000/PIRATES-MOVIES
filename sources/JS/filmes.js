@@ -1,5 +1,5 @@
 const urlBase =
-"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-br&sort_by=popularity.desc";
+	"https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=pt-br&sort_by=popularity.desc";
 const urlImage = "https://image.tmdb.org/t/p/w500";
 const options = {
 	method: "GET",
@@ -29,15 +29,17 @@ async function fetchMovies(page = 1) {
 		console.error("Erro ao buscar filmes:", e);
 	}
 }
-function setString(string){
-	let newString = "";
-	for (let i in string){
-		if(string[i] == "-"){
-			newString += "/";
-		}else{
-			newString += string[i];
+function setString(string) {
+	function takeDate(i,range) {
+		let newDate = "";
+		while (i < range) {
+			newDate += string[i];
+			i++;
 		}
+		return newDate
 	}
+
+	let newString = takeDate(8,10) +"/"+ takeDate(5,7)+"/"+ takeDate(0,4);
 	return newString;
 }
 
@@ -45,7 +47,7 @@ async function loadMovies() {
 	if (loading) return;
 	loading = true; // Impede múltiplas chamadas simultâneas
 	const results = await fetchMovies(currentPage);
-	console.log(results[0])
+	console.log(results[0]);
 	if (results) {
 		results.forEach((movie, index) => {
 			const newObject = {
@@ -64,7 +66,7 @@ async function loadMovies() {
 	loading = false; // Permite novas chamadas
 }
 
-function deleteAll(title, image, avarege, overview,date) {
+function deleteAll(title, image, avarege, overview, date) {
 	body.innerHTML = false;
 	body.innerHTML = `
 		<div class="solo">
@@ -116,7 +118,11 @@ function drawMovie(movie, index) {
 
 // Detecta fim da página e carrega mais filmes
 window.addEventListener("scroll", () => {
-	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !loading) {
+	if (
+		window.innerHeight + window.scrollY >=
+			document.body.offsetHeight - 100 &&
+		!loading
+	) {
 		loadMovies();
 	}
 });

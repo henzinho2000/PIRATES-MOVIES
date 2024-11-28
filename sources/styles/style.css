@@ -1,10 +1,12 @@
 *{
       margin: 0;
       transition: all .5s cubic-bezier(0.075, 0.82, 1, 1);
+      color: var(--color3);
 }
 :root{
-      --color1: rgb(5, 32, 21);
-      --color2: rgb(252, 255, 240);
+      --color1: rgb(14, 4, 45);
+      --color2: rgb(30, 21, 123);
+      --color3: rgb(227, 255, 246);
 
       --fontFamily1: "Roboto", sans-serif;
 }
@@ -36,11 +38,10 @@ nav{
 a{   
       font-size: 8vw;
       font-weight: 600;
-      color: var(--color2);
       text-decoration: none;
 }
 .logo{
-      width: 40vw;
+      width: 30vw;
 }
 .movies{
       display: flex;
@@ -54,7 +55,7 @@ a{
       background-color: var(--color1);
       width: 20vw;
       margin: 2vw;
-      height: 50vw;
+      height: 42vw;
       color:var(--color2);
 }
 .filmes img{
@@ -84,10 +85,6 @@ a{
       width: 2vw;
 }
 
-i{
-      color: var(--color2);
-      font-size: 15vw;
-}
 .mandalorian{
       border-radius: 2vw;
 }
@@ -99,7 +96,6 @@ i{
       justify-content: center;
 }
 h1{
-      font-family: "Balsamiq Sans", sans-serif;
       font-size: 7vw;
 }
 
@@ -166,12 +162,48 @@ span{
 .right{
       width: 50%;
       text-align: justify;
+      background-color: var(--color1);
+      border-radius: 2vw;
+      padding: 2vw;
 }
 .right h1{
       text-align: start;
 }
 
 .abut{
-      width: 45%;
+      width: 30%;
       height: auto;
+}
+
+footer{
+      width: 100%;
+      height: 28vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+}
+.footer{
+      width: 95vw;
+      height: 25vh;
+      background-color: var(--color1);
+      border-radius: 2vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      flex-direction: column;
+}
+.footer h2{
+      text-align: center;
+      width: 100%;
+      font-size: 3vw;
+}
+.link{
+      width: 95vw;
+      border-radius: 2vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+}
+.footer a{
+      font-size: 1.5vw;
 }

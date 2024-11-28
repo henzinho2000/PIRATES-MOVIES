@@ -30,6 +30,21 @@ async function fetchMovies(page = 1) {
 	}
 }
 
+function setString(string) {
+	function takeDate(i,range) {
+		let newDate = "";
+		while (i < range) {
+			newDate += string[i];
+			i++;
+		}
+		return newDate
+	}
+
+	let newString = takeDate(8,10) +"/"+ takeDate(5,7)+"/"+ takeDate(0,4);
+	return newString;
+}
+
+
 async function loadMovies() {
 	if (loading) return;
 	loading = true; // Impede múltiplas chamadas simultâneas
@@ -42,7 +57,7 @@ async function loadMovies() {
 				avarege: movie.vote_average.toFixed(2),
 				overview: movie.overview,
 				popularity: movie.popularity,
-				date: movie.first_air_date,
+				date: setString(movie.first_air_date),
 			};
 			movies.push(newObject);
 			drawMovie(newObject, index);
